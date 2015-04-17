@@ -5,14 +5,15 @@ class database:
     connection = None
 
     @classmethod
-    def create_connection(cls):
+    def create_connection(cls, **kwargs):
         cls.connection = pymysql.connect(
             host='localhost',
             user='root',
-            passwd='1q2w3e4r',
-            db='ops'
+            passwd=kwargs.get('passwd', '1q2w3e4r'),
+            db='ops',
+            charset='utf8'
         )
-        cls.cursor = connection.cursor()
+        cls.cursor = cls.connection.cursor()
 
     @classmethod
     def close_connection(cls):
@@ -23,3 +24,9 @@ class database:
         sql = "SELECT * FROM materials WHERE sap_mat_code='%s'" % sap_mat_code
         cls.cursor.execute(sql)
         return cls.cursor.fetchone()
+
+    @classmethod
+    def get_location_id_group_from_items(cls):
+        sql = "select location_id from items group by location_id"
+        cls.cursor.execute(sql)
+        return cls.cursor.fetchall()
