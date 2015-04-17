@@ -7,12 +7,13 @@ class database:
     connection = None
 
     @classmethod
-    def create_connection(cls):
+    def create_connection(cls, **kwargs):
         cls.connection = pymysql.connect(
-            host='localhost',
-            user='root',
-            passwd='1q2w3e4r',
-            db='ops'
+            host=kwargs.get('host', 'localhost'),
+            user=kwargs.get('user', 'root'),
+            passwd=kwargs.get('passwd', '1q2w3e4r'),
+            db=kwargs.get('db', 'ops'),
+            charset='utf8'
         )
         cls.cursor = cls.connection.cursor()
 
@@ -37,3 +38,9 @@ class database:
         sql = "SELECT * FROM locations WHERE location_id='%s'" % location_id
         cls.cursor.execute(sql)
         return cls.cursor.fetchone()
+
+    @classmethod
+    def get_location_id_group_from_items(cls):
+        sql = "select location_id from items group by location_id"
+        cls.cursor.execute(sql)
+        return cls.cursor.fetchall()

@@ -134,7 +134,12 @@ if __name__ == "__main__":
     if not len(sys.argv):
         print "Please specify excel file."
     else:
-        database.create_connection()
+        database.create_connection(
+            host='localhost',
+            user='root',
+            passwd='1q2w3e4r',
+            db='ops'
+        )
         yamato_excel.load_data(sys.argv[1])
 
         print "Generating sql file please wait ..."
