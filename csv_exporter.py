@@ -24,10 +24,8 @@ class UnicodeWriter:
     def writerow(self, row):
         tmp = []
         for s in row:
-            tmp.append( unicode(s).encode('utf-8') if s is not None else None )
+            tmp.append( s.encode('utf-8') if s is not None else None )
         self.writer.writerow(tmp)
-        # User comment
-        # self.writer.writerow([unicode(s).encode("utf-8") for s in row if s])
         
         # Fetch UTF-8 output from the queue ...
         data = self.queue.getvalue()
@@ -66,8 +64,7 @@ class CSVExporter():
                 writer.writerow(self.headers)
 
                 for row in self.__iter_rows(self.db.cursor):
-                    #print row
-                    writer.writerow([row[0], row[1], row[2], row[3], u'%s' % row[4], row[5].year, row[5].month])
+                    writer.writerow([row[0], row[1], row[2], row[3], row[4], str(row[5].year), str(row[5].month)])
                 
     def __iter_rows(self, cursor, size=100):
         while True:
