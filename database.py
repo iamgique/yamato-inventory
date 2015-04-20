@@ -44,3 +44,21 @@ class database:
         sql = "select location_id from items group by location_id"
         cls.cursor.execute(sql)
         return cls.cursor.fetchall()
+
+    @classmethod
+    def get_all_skus(cls):
+        sql = "SELECT * FROM skus;"
+        cls.cursor.execute(sql)
+        return cls.cursor.fetchall()
+
+    @classmethod
+    def count_items_by_sku(cls, sku):
+        sql = "SELECT COUNT(*) FROM items WHERE sku_mat_code LIKE '{}%';".format(sku)
+        cls.cursor.execute(sql)
+        return cls.cursor.fetchone()
+
+    @classmethod
+    def count_virtual_stock_by_sku(cls, sku):
+        sql = "SELECT stock_level FROM materials WHERE sku_id='{}';".format(sku)
+        cls.cursor.execute(sql)
+        return cls.cursor.fetchone()
