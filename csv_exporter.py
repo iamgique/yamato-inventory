@@ -6,6 +6,8 @@ import pymysql
 from database import database
 import codecs
 import cStringIO
+import os
+import sys
 
 class UnicodeWriter:
     """
@@ -45,6 +47,9 @@ class CSVExporter():
     db = None
     headers = ['UID', 'Material ID', 'Color', 'Brand', 'ItemName', 'Year', 'Month']
 
+    def __init__(self, target_folder):
+        self.target_folder = target_folder
+
     def initial_connection(self):
         self.db = database
         self.db.create_connection()
@@ -54,11 +59,14 @@ class CSVExporter():
         sql += "from items, skus "
         sql += "where substring_index(items.sku_mat_code, '-', 1) = skus.sku_id "
 
+        if not os.path.exists('./%s' % self.target_folder):
+            os.mkdir(self.target_folder)
+
         
         location_list = [item[0] for item in self.db.get_location_id_group_from_items()]
         for location in location_list:
             self.db.cursor.execute(sql + " and location_id = '{}'".format(location))
-            with open('items_on_{}.csv'.format(location), 'wb') as csvfile:
+            with open('./{}/items_on_{}.csv'.format(self.target_folder, location), 'wb') as csvfile:
 
                 writer = UnicodeWriter(csvfile)
                 writer.writerow(self.headers)
@@ -75,6 +83,11 @@ class CSVExporter():
                 yield row
 
 if __name__=='__main__':
-    c = CSVExporter()
+    target_folder = 'csv'
+    if len(sys.argv) > 1:
+        target_folder = sys.argv[1]
+        
+    c = CSVExporter(target_folder)
     c.initial_connection()
     c.export_each_location()
+    
