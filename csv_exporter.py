@@ -49,7 +49,7 @@ class CSVExporter():
 
     def initial_connection(self):
         self.db = database
-        self.db.create_connection(passwd='root')
+        self.db.create_connection()
 
     def export_each_location(self):
         sql = "select items.uid, items.sku_mat_code, skus.color, skus.brand_id, items.item_name, items.created_at, items.location_id "
@@ -66,7 +66,7 @@ class CSVExporter():
                 writer.writerow(self.headers)
 
                 for row in self.__iter_rows(self.db.cursor):
-                    print row
+                    #print row
                     writer.writerow([row[0], row[1], row[2], row[3], u'%s' % row[4], row[5].year, row[5].month])
                 
     def __iter_rows(self, cursor, size=100):
