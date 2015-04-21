@@ -64,11 +64,11 @@ class yamato_excel:
             material = database.get_mat_from_sap_matcode(item['item_code'])
 
             if location == None:
-                cls.lost_locations[item['location_no']] = "Not found location: %s" % item['location_no']
+                cls.lost_locations[item['location_no']] = "%s, %s" % (item['location_no'], item['qty_on_hand'])
                 continue
 
             if material == None:
-                cls.lost_materials[item['item_code']] = "Not found material: %s" % item['item_code']
+                cls.lost_materials[item['item_code']] = "%s, %s" % (item['item_code'], item['qty_on_hand'])
                 continue
 
             supplier = database.get_supplier_from_supplier_code(material[2])
@@ -123,19 +123,23 @@ class yamato_excel:
         else:
             print "Data errors:"
 
-            location_file = open('not_found_locations.txt', 'w')
+            location_file = open('not_found_locations.csv', 'w')
+            location_file.write("location_no, qty_on_hand\n")
+
             for location in cls.lost_locations.keys():
                 location_file.write("%s\n" % cls.lost_locations[location])
                 print cls.lost_locations[location]
             location_file.close()
 
-            material_file = open('not_found_materials.txt', 'w')
+            material_file = open('not_found_materials.csv', 'w')
+            material_file.write("item_code, qty_on_hand\n")
+
             for material in cls.lost_materials.keys():
                 material_file.write("%s\n" % cls.lost_materials[material])
                 print cls.lost_materials[material]
             material_file.close()
 
-            print "Save log to 'not_found_locations.txt' and 'not_found_materials.txt'"
+            print "Save log to 'not_found_locations.csv' and 'not_found_materials.csv'"
 
             return False
 
