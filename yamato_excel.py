@@ -15,7 +15,7 @@ class yamato_excel:
     worksheet = None
     items = []
     lost_locations = []
-    lost_materials = {}
+    lost_materials = []
     columns = {
         'date': 'A',
         'warehouse_code': 'B',
@@ -69,7 +69,8 @@ class yamato_excel:
                 continue
 
             if material == None:
-                cls.lost_materials[item['item_code']] = "%s, %s" % (item['item_code'], item['qty_on_hand'])
+                #cls.lost_materials[item['item_code']] = "%s, %s" % (item['item_code'], item['qty_on_hand'])
+                cls.lost_materials.append("%s, %s" % (item['item_code'], item['qty_on_hand']))
                 continue
 
             supplier = database.get_supplier_from_supplier_code(material[2])
@@ -134,8 +135,9 @@ class yamato_excel:
             material_file = open('not_found_materials.csv', 'w')
             material_file.write("item_code, qty_on_hand\n")
 
-            for material in cls.lost_materials.keys():
-                material_file.write("%s\n" % cls.lost_materials[material])
+            for material in cls.lost_materials:
+                material_file.write("%s\n" % material)
+                #material_file.write("%s\n" % cls.lost_materials[material])
             material_file.close()
 
             print "Save log to 'not_found_locations.csv' and 'not_found_materials.csv'"
