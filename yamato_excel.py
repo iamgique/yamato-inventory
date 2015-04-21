@@ -112,7 +112,7 @@ class yamato_excel:
         sql = """
             INSERT INTO item_history (uid, status_id, created_by)
             VALUES ('%s', %s, '%s');
-        """ % (uid, status_id, 'Yamato')
+        """ % (uid, status_id, 'Yamato Migration')
         return sql
 
     @classmethod
