@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import datetime
 import textwrap
 import openpyxl
 
@@ -93,14 +94,15 @@ class yamato_excel:
         sku_mat_code = material[0]
         supplier_sku = material[5]
 
+        date = datetime.datetime.strptime(item['date'], '%Y%m%d')
         item_name = item['item_name'].replace("'", "\\'")
         location_id = item['location_no']
         status_id = cls.status[item['warehouse_code']]
 
         sql = """
-            INSERT INTO items (uid, sku_mat_code, item_name, location_id, status_id, updated_by, company_name, supplier_code, supplier_sku)
-            VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s');
-        """ % (uid, sku_mat_code, item_name, location_id, status_id, 'Yamato', company_name, supplier_code, supplier_sku)
+            INSERT INTO items (uid, sku_mat_code, item_name, location_id, status_id, updated_by, company_name, supplier_code, supplier_sku, created_at)
+            VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s', '%s');
+        """ % (uid, sku_mat_code, item_name, location_id, status_id, 'Yamato', company_name, supplier_code, supplier_sku, date)
         return sql
 
     @classmethod
