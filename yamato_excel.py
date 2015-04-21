@@ -82,6 +82,7 @@ class yamato_excel:
                 sqlfile.write(textwrap.dedent(sql_item.encode('utf-8')))
                 sqlfile.write(textwrap.dedent(sql_history.encode('utf-8')))
 
+        sqlfile.write("\nUPDATE item_sequencing SET sequence='%s' WHERE item_id='%s';" % (uid[-5:], uid[:6]))
         sqlfile.close()
 
     @classmethod
@@ -120,10 +121,19 @@ class yamato_excel:
         else:
             print "Data errors:"
 
+            location_file = open('not_found_locations.txt', 'w')
             for location in cls.lost_locations.keys():
+                location_file.write(cls.lost_locations[location])
                 print cls.lost_locations[location]
+            location_file.close()
+
+            material_file = open('not_found_materials.txt', 'w')
             for material in cls.lost_materials.keys():
+                material_file.write(cls.lost_materials[material])
                 print cls.lost_materials[material]
+            material_file.close()
+
+            print "Save log to 'not_found_locations.txt' and 'not_found_materials.txt'"
 
             return False
 
