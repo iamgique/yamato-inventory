@@ -102,7 +102,7 @@ class yamato_excel:
         sql = """
             INSERT INTO items (uid, sku_mat_code, item_name, location_id, status_id, updated_by, company_name, supplier_code, supplier_sku, created_at)
             VALUES ('%s', '%s', '%s', '%s', %s, '%s', '%s', '%s', '%s', '%s');
-        """ % (uid, sku_mat_code, item_name, location_id, status_id, 'Yamato', company_name, supplier_code, supplier_sku, date)
+        """ % (uid, sku_mat_code, item_name, location_id, status_id, 'Yamato Migration', company_name, supplier_code, supplier_sku, date)
         return sql
 
     @classmethod
@@ -125,13 +125,13 @@ class yamato_excel:
 
             location_file = open('not_found_locations.txt', 'w')
             for location in cls.lost_locations.keys():
-                location_file.write(cls.lost_locations[location])
+                location_file.write("%s\n" % cls.lost_locations[location])
                 print cls.lost_locations[location]
             location_file.close()
 
             material_file = open('not_found_materials.txt', 'w')
             for material in cls.lost_materials.keys():
-                material_file.write(cls.lost_materials[material])
+                material_file.write("%s\n" % cls.lost_materials[material])
                 print cls.lost_materials[material]
             material_file.close()
 
