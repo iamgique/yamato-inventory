@@ -14,7 +14,7 @@ class yamato_excel:
     current_uid = 1
     worksheet = None
     items = []
-    lost_locations = {}
+    lost_locations = []
     lost_materials = {}
     columns = {
         'date': 'A',
@@ -64,7 +64,8 @@ class yamato_excel:
             material = database.get_mat_from_sap_matcode(item['item_code'])
 
             if location == None:
-                cls.lost_locations[item['location_no']] = "%s, %s" % (item['location_no'], item['qty_on_hand'])
+                #cls.lost_locations[item['location_no']] = "%s, %s" % (item['location_no'], item['qty_on_hand'])
+                cls.lost_locations.append("%s, %s" % (item['location_no'], item['qty_on_hand']))
                 continue
 
             if material == None:
@@ -126,9 +127,8 @@ class yamato_excel:
             location_file = open('not_found_locations.csv', 'w')
             location_file.write("location_no, qty_on_hand\n")
 
-            for location in cls.lost_locations.keys():
-                location_file.write("%s\n" % cls.lost_locations[location])
-                print cls.lost_locations[location]
+            for location in cls.lost_locations:
+                location_file.write("%s\n" % location)
             location_file.close()
 
             material_file = open('not_found_materials.csv', 'w')
@@ -136,7 +136,6 @@ class yamato_excel:
 
             for material in cls.lost_materials.keys():
                 material_file.write("%s\n" % cls.lost_materials[material])
-                print cls.lost_materials[material]
             material_file.close()
 
             print "Save log to 'not_found_locations.csv' and 'not_found_materials.csv'"
