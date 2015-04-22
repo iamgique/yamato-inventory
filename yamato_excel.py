@@ -56,8 +56,11 @@ class yamato_excel:
 
     @classmethod
     def generate_sql_file(cls, filename='yamato.sql'):
-        sqlfile = open(filename, 'w')
         uid = 'TH011500000'
+
+        sqlfile = open(filename, 'w')
+        sqlfile.write("DELETE FROM item_history;\n")
+        sqlfile.write("DELETE FROM items;\n")
 
         for item in cls.items:
             location = database.get_location_from_location_id(item['location_no'])
@@ -85,7 +88,9 @@ class yamato_excel:
                 sqlfile.write(textwrap.dedent(sql_item.encode('utf-8')))
                 sqlfile.write(textwrap.dedent(sql_history.encode('utf-8')))
 
-        sqlfile.write("\nUPDATE item_sequencing SET sequence='%s' WHERE item_id='%s';" % (uid[-5:], uid[:6]))
+        sqlfile.write("\n")
+        sqlfile.write("DELETE FROM item_sequencing;\n")
+        sqlfile.write("INSERT INTO item_sequencing (item_id, sequence) VALUES ('%s', '%s');" % (uid[-5:], uid[:6]))
         sqlfile.close()
 
     @classmethod
