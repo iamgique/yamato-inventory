@@ -14,7 +14,7 @@ class pcms_stock:
         logfile = open('update_stock.txt', 'w')
         records = database.get_all_skus()
 
-        for record in records[:15]:
+        for record in records:
             total = 0
             sku = record[0]
 
