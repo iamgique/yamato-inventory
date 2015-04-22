@@ -11,10 +11,10 @@ pcms_api = "http://pcms-b-alpha.itruemart.com/api/v4/stock/increase"
 class pcms_stock:
     @classmethod
     def sync_total(cls):
+        logfile = open('update_stock.txt', 'w')
         records = database.get_all_skus()
 
-        stocks = []
-        for record in records[:102]:
+        for record in records[:15]:
             total = 0
             sku = record[0]
 
@@ -25,24 +25,21 @@ class pcms_stock:
             total += int(virtual[0]) if virtual else 0
 
             stock = cls.build_sku_stock_update(sku, total)
-            stocks.append(stock)
+            payload = [stock]
 
-        # while stocks != []:
-        #     skus = stocks[:10]
-        #     print "round: %s" % skus
-        #     del stocks[:10]
+            headers = {'content-type': 'application/json'}
+            response = requests.post(
+                pcms_api,
+                headers=headers,
+                data=json.dumps(payload)
+            )
 
-        headers = {'content-type': 'application/json'}
-        response = requests.post(
-            pcms_api,
-            headers=headers,
-            data=json.dumps(stocks)
-        )
+            log = "{}: {}".format(response.json()['message'], response.json()['data'])
+            print log
+            logfile.write("{}\n".format(log))
 
-        if response.json()['status'] == "error":
-            print "{}: {}".format(response.json()['message'], response.json()['data'])
-        else:
-            print "Sync stock completed."
+        logfile.close()
+
 
     @classmethod
     def build_sku_stock_update(cls, sku, total):
