@@ -62,3 +62,16 @@ class database:
         sql = "SELECT stock_level FROM materials WHERE sku_id='{}';".format(sku)
         cls.cursor.execute(sql)
         return cls.cursor.fetchone()
+
+    @classmethod
+    def get_all_failure_messages(cls):
+        sql = "SELECT * FROM failure_messages WHERE status='open';"
+        cls.cursor.execute(sql)
+        return cls.cursor.fetchall()
+
+    @classmethod
+    def mark_message_close(cls, msg_id):
+        sql = "UPDATE failure_messages SET status='close' WHERE id={};".format(msg_id)
+        cls.cursor.execute(sql)
+        cls.connection.commit()
+
