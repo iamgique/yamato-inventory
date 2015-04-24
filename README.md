@@ -8,7 +8,10 @@ Ensure you have python 2.6+ installed.
 Install python libs with following commands.
 
 ```
-$ yum install python-pip
+$ wget https://bootstrap.pypa.io/ez_setup.py
+$ python ez_setup.py
+$ easy_install pip
+
 $ pip install pymysql
 $ pip install requests
 $ pip install openpyxl
