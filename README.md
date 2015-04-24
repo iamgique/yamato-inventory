@@ -15,3 +15,20 @@ $ pip install openpyxl
 ```
 
 NOTE: You might need to `sudo` each command for permissions.
+
+## How to run script to migrate data.
+
+```
+$ python yamato_excel.py <path to excel file>
+```
+
+## How to run script to generate csv files.
+
+```
+$ python csv_exporter.py
+```
+
+## How to run script to sync stock to PCMS.
+```
+$ python pcms_stock.py
+```
