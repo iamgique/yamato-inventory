@@ -53,19 +53,19 @@ class database:
 
     @classmethod
     def count_items_by_sku(cls, sku):
-        sql = "SELECT COUNT(*) FROM items WHERE sku_mat_code LIKE '{}%';".format(sku)
+        sql = "SELECT COUNT(*) FROM items as its JOIN materials as mat on its.sku_mat_code = mat.mat_id WHERE mat.stock_type in ('CT','RT') AND its.status_id = '1' AND its.sku_mat_code LIKE '{}%';".format(sku)
         cls.cursor.execute(sql)
         return cls.cursor.fetchone()
 
     @classmethod
     def count_virtual_stock_by_sku(cls, sku):
-        sql = "SELECT stock_level FROM materials WHERE sku_id='{}';".format(sku)
+        sql = "SELECT sum(stock_level) FROM materials WHERE stock_type in ('RX', 'RD', 'MX', 'MD') AND sku_id='{}';".format(sku)
         cls.cursor.execute(sql)
         return cls.cursor.fetchone()
 
     @classmethod
     def get_all_failure_messages(cls):
-        sql = "SELECT * FROM failure_messages WHERE status='open';"
+        sql = "SELECT * FROM failure_messages WHERE status in ('open','retry_fail');"
         cls.cursor.execute(sql)
         return cls.cursor.fetchall()
 
@@ -75,3 +75,8 @@ class database:
         cls.cursor.execute(sql)
         cls.connection.commit()
 
+    @classmethod
+    def mark_message_failed_after_retry(cls,msg_id):
+        sql = "UPDATE failure_messages SET status='retry_fail' WHERE id={};".format(msg_id)
+        cls.cursor.execute(sql)
+        cls.connection.commit()
