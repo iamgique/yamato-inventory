@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# PCMS retry script version 1.0
+# PCMS retry script version 1.1
 import os
 import sys
 import json
@@ -11,6 +11,7 @@ pcms_api_prefix = "http://pcms-b-alpha.itruemart.com/api/v4/"
 pcms_api_increase = pcms_api_prefix + "stock/increase"
 pcms_api_decrease = pcms_api_prefix + "stock/decrease"
 pcms_api_sku_create = pcms_api_prefix + "sku/create"
+pcms_api_sku_update = pcms_api_prefix + "sku/update"
 pcms_api_order_update_status = pcms_api_prefix + "orders/update-status"
 
 class failure_messages_recovery:
@@ -35,7 +36,7 @@ class failure_messages_recovery:
 
     @classmethod
     def recover(cls):
-        logfile = open('failure_messages_recovery.log', 'w')
+        logfile = open('failure_messages_recovery.log', 'a')
         records = database.get_all_failure_messages()
         pcms_api = None
         failed = False
@@ -66,6 +67,8 @@ class failure_messages_recovery:
                 pcms_api = pcms_api_decrease
             elif record[3] == "sku/create":
                 pcms_api = pcms_api_sku_create
+            elif record[3] == "sku/update":
+                pcms_api = pcms_api_sku_update
             elif record[3] == "orders/update-status":
                 pcms_api = pcms_api_order_update_status
             else:
@@ -74,6 +77,8 @@ class failure_messages_recovery:
 
             headers = {'Content-Type': 'application/json'}
             try:
+                # write to file before send
+                logfile.write(payload)
                 response = requests.post(
                     pcms_api,
                     headers=headers,
