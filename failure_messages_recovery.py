@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# PCMS retry script version 1.0
 import os
 import sys
 import json
@@ -49,10 +50,19 @@ class failure_messages_recovery:
             payload = record[1]
             # Check message type
             if record[3] == "stock/increase":
-                payload = failure_messages_recovery.process_update_stock(payload)
+                try:
+                    payload = failure_messages_recovery.process_update_stock(payload)
+                except:
+                    print("failed to update stock increase message {}").format(payload)
+                    database.mark_message_failed_after_retry(record[0])
+                    exit()
                 pcms_api = pcms_api_increase
             elif record[3] == "stock/decrease":
-                payload = failure_messages_recovery.process_update_stock(payload)
+                try:
+                    payload = failure_messages_recovery.process_update_stock(payload)
+                except:
+                    print("failed to update stock decrease message {}").format(payload)
+                    database.mark_message_failed_after_retry(record[0])
                 pcms_api = pcms_api_decrease
             elif record[3] == "sku/create":
                 pcms_api = pcms_api_sku_create
