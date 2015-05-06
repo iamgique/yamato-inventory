@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# PCMS retry script version 1.1
+# PCMS retry script version 1.2
 import os
 import sys
 import json
@@ -54,7 +54,7 @@ class failure_messages_recovery:
                 try:
                     payload = failure_messages_recovery.process_update_stock(payload)
                 except:
-                    print("failed to update stock increase message {}").format(payload)
+                    print("failed to update stock increase message {}").format(payload.encode('utf-8'))
                     database.mark_message_failed_after_retry(record[0])
                     exit()
                 pcms_api = pcms_api_increase
@@ -62,7 +62,7 @@ class failure_messages_recovery:
                 try:
                     payload = failure_messages_recovery.process_update_stock(payload)
                 except:
-                    print("failed to update stock decrease message {}").format(payload)
+                    print("failed to update stock decrease message {}").format(payload.encode('utf-8'))
                     database.mark_message_failed_after_retry(record[0])
                 pcms_api = pcms_api_decrease
             elif record[3] == "sku/create":
@@ -78,11 +78,11 @@ class failure_messages_recovery:
             headers = {'Content-Type': 'application/json'}
             try:
                 # write to file before send
-                logfile.write(payload)
+                logfile.write(payload.encode('utf-8'))
                 response = requests.post(
                     pcms_api,
                     headers=headers,
-                    data=payload
+                    data=payload.encode('utf-8')
                 )
 
                 if int(response.json()["code"]) == 200:
@@ -91,10 +91,11 @@ class failure_messages_recovery:
                     print response.json()
                     failed = True
             except:
+                print "Unexpected error:", sys.exc_info()
                 failed = True
 
             if failed:
-                print('Message id = {} failed with payload = {}'.format(record[0], payload))
+                print('Message id = {} api = {} failed with payload = {}'.format(record[0], record[3], payload.encode('utf-8')))
                 database.mark_message_failed_after_retry(record[0])
                 exit()
 
