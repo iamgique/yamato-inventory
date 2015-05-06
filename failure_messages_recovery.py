@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-# PCMS retry script version 1.2
+# PCMS retry script version 1.3
 import os
 import sys
 import json
 import requests
+import yaml
+import logging.config
+import logging
 
 from database import *
 
@@ -13,6 +16,13 @@ pcms_api_decrease = pcms_api_prefix + "stock/decrease"
 pcms_api_sku_create = pcms_api_prefix + "sku/create"
 pcms_api_sku_update = pcms_api_prefix + "sku/update"
 pcms_api_order_update_status = pcms_api_prefix + "orders/update-status"
+
+def setup_logging(default_path='logging.yaml'):
+    #Loading logging config
+    with open(default_path, 'rt') as f:
+        config = yaml.load(f.read())
+    logging.config.dictConfig(config)
+
 
 class failure_messages_recovery:
     @classmethod
@@ -36,7 +46,6 @@ class failure_messages_recovery:
 
     @classmethod
     def recover(cls):
-        logfile = open('failure_messages_recovery.log', 'a')
         records = database.get_all_failure_messages()
         pcms_api = None
         failed = False
@@ -54,7 +63,11 @@ class failure_messages_recovery:
                 try:
                     payload = failure_messages_recovery.process_update_stock(payload)
                 except:
-                    print("failed to update stock increase message {}").format(payload.encode('utf-8'))
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    err_line = traceback.format_exception(exc_type, exc_value, exc_traceback)
+                    main_logger.error(err_line)
+                    err_line = format("failed to update stock increase message {}", payload)
+                    main_logger.error(err_line)
                     database.mark_message_failed_after_retry(record[0])
                     exit()
                 pcms_api = pcms_api_increase
@@ -62,8 +75,13 @@ class failure_messages_recovery:
                 try:
                     payload = failure_messages_recovery.process_update_stock(payload)
                 except:
-                    print("failed to update stock decrease message {}").format(payload.encode('utf-8'))
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    err_line = traceback.format_exception(exc_type, exc_value, exc_traceback)
+                    main_logger.error(err_line)
+                    err_line = format("failed to update stock increase message {}", payload)
+                    main_logger.error(err_line)
                     database.mark_message_failed_after_retry(record[0])
+                    exit()
                 pcms_api = pcms_api_decrease
             elif record[3] == "sku/create":
                 pcms_api = pcms_api_sku_create
@@ -72,13 +90,13 @@ class failure_messages_recovery:
             elif record[3] == "orders/update-status":
                 pcms_api = pcms_api_order_update_status
             else:
-                print("Unknown message type. Type = {}".format(record[3]))
+                main_logger.error(format("Unknown message type. Type = {}",format(record[3])))
                 exit()
 
             headers = {'Content-Type': 'application/json'}
             try:
                 # write to file before send
-                logfile.write(payload.encode('utf-8'))
+                main_logger.info(payload)
                 response = requests.post(
                     pcms_api,
                     headers=headers,
@@ -88,14 +106,17 @@ class failure_messages_recovery:
                 if int(response.json()["code"]) == 200:
                     database.mark_message_close(record[0])
                 else:
-                    print response.json()
+                    main_logger.error(response.json())
                     failed = True
             except:
-                print "Unexpected error:", sys.exc_info()
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                err_line = traceback.format_exception(exc_type, exc_value, exc_traceback)
+                main_logger.error(err_line)
                 failed = True
 
             if failed:
-                print('Message id = {} api = {} failed with payload = {}'.format(record[0], record[3], payload.encode('utf-8')))
+                err_line = "Message id = %s api = %s failed with payload = %s" % (record[0], record[3], payload)
+                main_logger.error(err_line)
                 database.mark_message_failed_after_retry(record[0])
                 exit()
 
@@ -107,4 +128,6 @@ if __name__ == "__main__":
         passwd='',
         db='ops'
     )
+    setup_logging('logging.yaml')
+    main_logger = logging.getLogger('main_module')
     failure_messages_recovery.recover()

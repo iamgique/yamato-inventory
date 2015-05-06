@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Database class for PCMS script version 1.2
+# Database class for PCMS script version 1.3
 import pymysql
 
 class database:
