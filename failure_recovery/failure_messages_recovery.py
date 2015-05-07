@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# PCMS retry script version 1.4
+# PCMS retry script version 1.5
 import os
 import sys
 import json
@@ -11,7 +11,7 @@ import logging
 from database import *
 from tendo import singleton
 
-pcms_api_prefix = "http://pcms-b-alpha.itruemart.com/api/v4/"
+pcms_api_prefix = "http://pcms.itruemart.com/api/v4/"
 pcms_api_increase = pcms_api_prefix + "stock/increase"
 pcms_api_decrease = pcms_api_prefix + "stock/decrease"
 pcms_api_sku_create = pcms_api_prefix + "sku/create"
@@ -125,10 +125,10 @@ class failure_messages_recovery:
 if __name__ == "__main__":
     me = singleton.SingleInstance()
     database.create_connection(
-        host='localhost',
-        user='root',
-        passwd='',
-        db='ops'
+        host='myl.iems.com',
+        user='ems_rw',
+        passwd='1q2w3e4r',
+        db='ems_db'
     )
     setup_logging('logging.yaml')
     main_logger = logging.getLogger('main_module')
