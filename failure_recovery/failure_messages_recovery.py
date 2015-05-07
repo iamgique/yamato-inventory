@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# PCMS retry script version 1.3
+# PCMS retry script version 1.4
 import os
 import sys
 import json
@@ -9,6 +9,7 @@ import logging.config
 import logging
 
 from database import *
+from tendo import singleton
 
 pcms_api_prefix = "http://pcms-b-alpha.itruemart.com/api/v4/"
 pcms_api_increase = pcms_api_prefix + "stock/increase"
@@ -122,6 +123,7 @@ class failure_messages_recovery:
 
 
 if __name__ == "__main__":
+    me = singleton.SingleInstance()
     database.create_connection(
         host='localhost',
         user='root',
