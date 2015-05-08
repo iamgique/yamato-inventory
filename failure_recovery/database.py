@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Database class for PCMS script version 1.5
 import pymysql
 
 class database:
@@ -78,5 +76,12 @@ class database:
     @classmethod
     def mark_message_failed_after_retry(cls,msg_id):
         sql = "UPDATE failure_messages SET status='retry_fail' WHERE id={};".format(msg_id)
+        cls.cursor.execute(sql)
+        cls.connection.commit()
+
+
+    @classmethod
+    def mark_message_ignore(cls,msg_id):
+        sql = "UPDATE failure_messages SET status='ignore' WHERE id={};".format(msg_id)
         cls.cursor.execute(sql)
         cls.connection.commit()

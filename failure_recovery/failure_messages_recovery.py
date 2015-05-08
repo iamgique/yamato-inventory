@@ -7,6 +7,8 @@ import requests
 import yaml
 import logging.config
 import logging
+import re
+import sys, traceback
 
 from database import *
 from tendo import singleton
@@ -86,6 +88,10 @@ class failure_messages_recovery:
                 pcms_api = pcms_api_decrease
             elif record[3] == "sku/create":
                 pcms_api = pcms_api_sku_create
+                if(record[2].find("Error, Duplicate SKU.")):
+                    main_logger.info("Found duplicate SKU. Ignore")
+                    database.mark_message_ignore(record[0])
+                    continue
             elif record[3] == "sku/update":
                 pcms_api = pcms_api_sku_update
             elif record[3] == "orders/update-status":
@@ -124,12 +130,19 @@ class failure_messages_recovery:
 
 if __name__ == "__main__":
     me = singleton.SingleInstance()
+    #database.create_connection(
+    #    host='myl.iems.com',
+    #    user='ems_rw',
+    #    passwd='1q2w3e4r',
+    #    db='ems_db'
+    #)
     database.create_connection(
-        host='myl.iems.com',
-        user='ems_rw',
-        passwd='1q2w3e4r',
-        db='ems_db'
+        host='localhost',
+        user='root',
+        passwd='',
+        db='ops'
     )
+
     setup_logging('logging.yaml')
     main_logger = logging.getLogger('main_module')
     failure_messages_recovery.recover()
