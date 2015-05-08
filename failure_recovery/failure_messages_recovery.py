@@ -130,17 +130,11 @@ class failure_messages_recovery:
 
 if __name__ == "__main__":
     me = singleton.SingleInstance()
-    #database.create_connection(
-    #    host='myl.iems.com',
-    #    user='ems_rw',
-    #    passwd='1q2w3e4r',
-    #    db='ems_db'
-    #)
     database.create_connection(
-        host='localhost',
-        user='root',
-        passwd='',
-        db='ops'
+        host='myl.iems.com',
+        user='ems_rw',
+        passwd='1q2w3e4r',
+        db='ems_db'
     )
 
     setup_logging('logging.yaml')
