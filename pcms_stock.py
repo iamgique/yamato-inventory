@@ -15,7 +15,9 @@ class pcms_stock:
         logfile = open('update_stock.txt', 'w')
         records = database.get_all_skus()
 
-        for record in records:
+        error_list = []
+
+        for record in records[:10]:
             total = 0
             sku = record[0]
 
@@ -45,7 +47,14 @@ class pcms_stock:
             logfile.write("{0}\n".format(res))
             print res
 
+            if 'Error' in res:
+                error_list.append(res)
+
         logfile.close()
+
+        errfile = open('update_stock_error.txt', 'w')
+        errfile.write('\n'.join(error_list))
+        errfile.close()
 
 
     @classmethod
