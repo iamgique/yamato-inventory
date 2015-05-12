@@ -6,7 +6,8 @@ import requests
 
 from database import *
 
-pcms_api = "http://pcms.itruemart.com/api/v4/stock/increase"
+#pcms_api = "http://pcms.itruemart.com/api/v4/stock/increase"
+pcms_api = "http://pcms.itruemart-dev.com/api/v4/stock/increase"
 
 class pcms_stock:
     @classmethod
@@ -17,6 +18,8 @@ class pcms_stock:
         for record in records:
             total = 0
             sku = record[0]
+
+            print "sending sku: " + sku
 
             physical = database.count_items_by_sku(sku)
             virtual = database.count_virtual_stock_by_sku(sku)
@@ -56,7 +59,8 @@ class pcms_stock:
 
 if __name__ == "__main__":
     database.create_connection(
-        host='myl.iems.com',
+        #host='myl.iems.com',
+        host='myl.iems-dev.com',
         user='ems_rw',
         passwd='1q2w3e4r',
         db='ems_db'

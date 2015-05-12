@@ -51,13 +51,13 @@ class database:
 
     @classmethod
     def count_items_by_sku(cls, sku):
-        sql = "SELECT COUNT(*) FROM items as its JOIN materials as mat on its.sku_mat_code = mat.mat_id WHERE mat.stock_type in ('CT','RT') AND its.status_id = '1' AND its.sku_mat_code LIKE '{}%';".format(sku)
+        sql = "SELECT COUNT(*) FROM items as its JOIN materials as mat on its.sku_mat_code = mat.mat_id WHERE mat.stock_type in ('CT','RT') AND its.status_id = '1' AND its.sku_mat_code LIKE '{0}%';".format(sku)
         cls.cursor.execute(sql)
         return cls.cursor.fetchone()
 
     @classmethod
     def count_virtual_stock_by_sku(cls, sku):
-        sql = "SELECT sum(stock_level) FROM materials WHERE stock_type in ('RX', 'RD', 'MX', 'MD') AND sku_id='{}';".format(sku)
+        sql = "SELECT sum(stock_level) FROM materials WHERE stock_type in ('RX', 'RD', 'MX', 'MD') AND sku_id='{0}';".format(sku)
         cls.cursor.execute(sql)
         return cls.cursor.fetchone()
 
