@@ -19,8 +19,6 @@ class pcms_stock:
             total = 0
             sku = record[0]
 
-            print "sending sku: " + sku
-
             physical = database.count_items_by_sku(sku)
             virtual = database.count_virtual_stock_by_sku(sku)
 
@@ -32,6 +30,10 @@ class pcms_stock:
             stock = cls.build_sku_stock_update(sku, total)
             payload = [stock]
 
+            req = "sending sku: " + sku + ", total: " + str(total)
+            logfile.write("{0}\n".format(req))
+            print req
+
             headers = {'content-type': 'application/json'}
             response = requests.post(
                 pcms_api,
@@ -39,9 +41,9 @@ class pcms_stock:
                 data=json.dumps(payload)
             )
 
-            log = "{}: {}".format(response.json()['message'], response.json()['data'])
-            print log
-            logfile.write("{}\n".format(log))
+            res = "{0}: {1}".format(response.json()['message'], response.json()['data'])
+            logfile.write("{0}\n".format(res))
+            print res
 
         logfile.close()
 
