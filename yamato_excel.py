@@ -40,6 +40,7 @@ class yamato_excel:
 
         for row in range(2, len(cls.worksheet.rows) + 1):
             data = {
+                'row': row,
                 'date': cls.get_cell_value(row, 'date'),
                 'warehouse_code': cls.get_cell_value(row, 'warehouse_code'),
                 'item_code': cls.get_cell_value(row, 'item_code'),
@@ -68,12 +69,12 @@ class yamato_excel:
 
             if location == None:
                 #cls.lost_locations[item['location_no']] = "%s, %s" % (item['location_no'], item['qty_on_hand'])
-                cls.lost_locations.append("%s, %s" % (item['location_no'], item['qty_on_hand']))
+                cls.lost_locations.append("%s, %s, %s" % (item['row'], item['location_no'], item['qty_on_hand']))
                 continue
 
             if material == None:
                 #cls.lost_materials[item['item_code']] = "%s, %s" % (item['item_code'], item['qty_on_hand'])
-                cls.lost_materials.append("%s, %s" % (item['item_code'], item['qty_on_hand']))
+                cls.lost_materials.append("%s, %s, %s" % (item['row'], item['item_code'], item['qty_on_hand']))
                 continue
 
             supplier = database.get_supplier_from_supplier_code(material[2])
@@ -131,14 +132,14 @@ class yamato_excel:
             print "Data errors:"
 
             location_file = open('not_found_locations.csv', 'w')
-            location_file.write("location_no, qty_on_hand\n")
+            location_file.write("row, location_no, qty_on_hand\n")
 
             for location in cls.lost_locations:
                 location_file.write("%s\n" % location)
             location_file.close()
 
             material_file = open('not_found_materials.csv', 'w')
-            material_file.write("item_code, qty_on_hand\n")
+            material_file.write("row, item_code, qty_on_hand\n")
 
             for material in cls.lost_materials:
                 material_file.write("%s\n" % material)
