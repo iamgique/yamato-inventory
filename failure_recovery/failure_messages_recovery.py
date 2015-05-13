@@ -129,6 +129,7 @@ class failure_messages_recovery:
 
 
 if __name__ == "__main__":
+    logging_config =  os.path.dirname(os.path.realpath(__file__)) + "/logging.yaml"
     me = singleton.SingleInstance()
     database.create_connection(
         host='myl.iems.com',
@@ -137,6 +138,6 @@ if __name__ == "__main__":
         db='ems_db'
     )
 
-    setup_logging('logging.yaml')
+    setup_logging(logging_config)
     main_logger = logging.getLogger('main_module')
     failure_messages_recovery.recover()
