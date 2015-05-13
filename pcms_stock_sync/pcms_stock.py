@@ -17,7 +17,7 @@ class pcms_stock:
 
         error_list = []
 
-        for record in records[:10]:
+        for record in records:
             total = 0
             sku = record[0]
 
