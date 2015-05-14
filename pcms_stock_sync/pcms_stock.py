@@ -75,7 +75,7 @@ if __name__ == "__main__":
         host='myl.iems.com',
         #host='myl.iems-dev.com',
         user='ems_rw',
-        passwd='1q2w3e4r',
+        passwd='EE1m4$s4',
         db='ems_db'
     )
     pcms_stock.sync_total()
