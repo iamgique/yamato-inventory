@@ -134,7 +134,7 @@ if __name__ == "__main__":
     database.create_connection(
         host='myl.iems.com',
         user='ems_rw',
-        passwd='1q2w3e4r',
+        passwd='EE1m4$s4',
         db='ems_db'
     )
 
