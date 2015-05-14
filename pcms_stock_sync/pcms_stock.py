@@ -6,13 +6,15 @@ import requests
 
 from database import *
 
-#pcms_api = "http://pcms.itruemart.com/api/v4/stock/increase"
-pcms_api = "http://pcms.itruemart-dev.com/api/v4/stock/increase"
+logpath = "/data/logs/ems/"
+
+pcms_api = "http://pcms.itruemart.com/api/v4/stock/increase"
+#pcms_api = "http://pcms.itruemart-dev.com/api/v4/stock/increase"
 
 class pcms_stock:
     @classmethod
     def sync_total(cls):
-        logfile = open('update_stock.txt', 'w')
+        logfile = open(logpath + 'update_stock.txt', 'w')
         records = database.get_all_skus()
 
         error_list = []
@@ -52,7 +54,7 @@ class pcms_stock:
 
         logfile.close()
 
-        errfile = open('update_stock_error.txt', 'w')
+        errfile = open(logpath + 'update_stock_error.txt', 'w')
         errfile.write('\n'.join(error_list))
         errfile.close()
 
@@ -70,8 +72,8 @@ class pcms_stock:
 
 if __name__ == "__main__":
     database.create_connection(
-        #host='myl.iems.com',
-        host='myl.iems-dev.com',
+        host='myl.iems.com',
+        #host='myl.iems-dev.com',
         user='ems_rw',
         passwd='1q2w3e4r',
         db='ems_db'

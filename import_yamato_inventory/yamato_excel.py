@@ -91,7 +91,7 @@ class yamato_excel:
 
         sqlfile.write("\n")
         sqlfile.write("DELETE FROM item_sequencing;\n")
-        sqlfile.write("INSERT INTO item_sequencing (item_id, sequence) VALUES ('%s', '%s');" % (uid[-5:], uid[:6]))
+        sqlfile.write("INSERT INTO item_sequencing (item_id, sequence) VALUES ('%s', '%s');" % (uid[:6], uid[-5:]))
         sqlfile.close()
 
     @classmethod
