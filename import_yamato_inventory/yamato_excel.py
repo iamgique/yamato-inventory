@@ -34,7 +34,7 @@ class yamato_excel:
     }
 
     @classmethod
-    def load_data(cls, filename, sheetname='Inventory for check stock'):
+    def load_data(cls, filename, sheetname='Yamato Format with Locations'):
         workbook = openpyxl.load_workbook(filename)
         cls.worksheet = workbook[sheetname]
 
@@ -80,14 +80,15 @@ class yamato_excel:
             supplier = database.get_supplier_from_supplier_code(material[2])
 
             qty = int(item['qty_on_hand'])
-            for i in range(0, qty):
-                uid = get_next_uid(uid)
+            if qty > 0:
+                for i in range(0, qty):
+                    uid = get_next_uid(uid)
 
-                sql_item = cls.build_item_statement(uid, item, material, supplier)
-                sql_history = cls.build_item_history_statement(uid, item)
+                    sql_item = cls.build_item_statement(uid, item, material, supplier)
+                    sql_history = cls.build_item_history_statement(uid, item)
 
-                sqlfile.write(textwrap.dedent(sql_item.encode('utf-8')))
-                sqlfile.write(textwrap.dedent(sql_history.encode('utf-8')))
+                    sqlfile.write(textwrap.dedent(sql_item.encode('utf-8')))
+                    sqlfile.write(textwrap.dedent(sql_history.encode('utf-8')))
 
         sqlfile.write("\n")
         sqlfile.write("DELETE FROM item_sequencing;\n")
@@ -102,7 +103,7 @@ class yamato_excel:
         sku_mat_code = material[0]
         supplier_sku = material[5]
 
-        date = datetime.datetime.strptime(item['date'], '%Y%m%d')
+        date = datetime.datetime.strptime(str(item['date']), '%Y%m%d')
         item_name = item['item_name'].replace("'", "\\'")
         location_id = item['location_no']
         status_id = cls.status[item['warehouse_code']]
