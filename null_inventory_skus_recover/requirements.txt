@@ -1,0 +1,5 @@
+PyMySQL==0.6.6
+requests==2.6.0
+tendo==0.2.7
+PyYAML==3.11
+simplejson==3.6.5
