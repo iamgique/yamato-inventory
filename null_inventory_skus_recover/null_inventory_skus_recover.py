@@ -37,7 +37,7 @@ class null_inventory_skus_recovery:
         # [7] primary cat id
         for record in records:
             sku_obj = {}
-            sku_obj['sku_id'] = record[0]
+            sku_obj['sku'] = record[0]
             sku_obj['name'] = record[1]
             sku_obj['color'] = record[2]
             sku_obj['size'] = record[3]
@@ -75,10 +75,10 @@ if __name__ == "__main__":
     logging_config =  os.path.dirname(os.path.realpath(__file__)) + "/logging.yaml"
     me = singleton.SingleInstance()
     database.create_connection(
-        host='localhost',
-        user='root',
-        passwd='',
-        db='ops'
+        host='myl.iems.com',
+        user='ems_rw',
+        passwd='1q2w3e4r',
+        db='ems_db'
     )
 
     setup_logging(logging_config)
