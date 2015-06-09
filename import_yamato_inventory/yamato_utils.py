@@ -7,7 +7,7 @@ PREFIX_WAREHOUSE = '01'
 PREFIX_YEAR = '15'
 
 def __base36encode(number):
-    alphabet = '0123456789' + string.ascii_uppercase
+    alphabet = '0123456789' + string.ascii_lowercase
     base36 = ''
     while number:
         number, i = divmod(number, 36)
