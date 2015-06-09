@@ -109,8 +109,11 @@ class failure_messages_recovery:
                     headers=headers,
                     data=payload.encode('utf-8')
                 )
-
-                if int(response.json()["code"]) == 200:
+                response_code = response.json()["code"]
+                if response_code == 200:
+                    database.mark_message_close(record[0])
+                elif response_code == 401:
+                    main_logger.info("received response code 401. No longer retry on this message")
                     database.mark_message_close(record[0])
                 else:
                     main_logger.error(response.json())
